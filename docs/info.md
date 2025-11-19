@@ -9,12 +9,12 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+TBC: Uses ring oscillators to do work, visualised via VGA display.
 
 ## How to test
 
-Explain how to use your project
+TBC: Select your ring speed and demo mode.
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+Tiny VGA PMOD.
