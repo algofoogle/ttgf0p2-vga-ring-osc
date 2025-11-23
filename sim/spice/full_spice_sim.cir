@@ -3,12 +3,19 @@ tt_um_algofoogle_vgaringosc_parax simulation
 .include /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.tech/ngspice/design.ngspice
 .lib /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
 .lib /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.tech/ngspice/smbb000149.ngspice typical
+.include /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.ref/gf180mcu_fd_sc_mcu7t5v0/spice/gf180mcu_fd_sc_mcu7t5v0.spice
 
+* This the SPICE netlist PEX (extraction from my design's GDS layout, including parasitics)
+* which was generated with: make pex
+* NOTE: That Make target assumes you have already generated the GDS using LibreLane,
+* and that the source GDS therefore comes from runs/wokwi/final/gds/.
 .include "tt_um_algofoogle_vgaringosc.from_gds.sim.spice"
 
+* gf180mcuD uses 3.3V core logic:
 .param vcc=3.3
 vcc vcc 0 {vcc}
 
+* Instantiate the tt_um_algofoogle_vgaringosc_parax DUT` (i.e. the circuit presenting my design)...
 *NOTE: Port ordering matches how it was extracted by Magic:
 xtt
 + 0
@@ -58,54 +65,25 @@ xtt
 + uo_out[7]
 + tt_um_algofoogle_vgaringosc_parax
 
-.param rise=     1n
-.param fall=     1n
-* Duty cycle (high time) of each digital input:
-.param h0=   40n-1n
-.param h1=   80n-1n
-.param h2=  160n-1n
-.param h3=  320n-1n
-.param h4=  640n-1n
-.param h5= 1280n-1n
-.param h6= 2560n-1n
-.param h7= 5120n-1n
-* Period of each digital input:
-.param p0=   80n
-.param p1=  160n
-.param p2=  320n
-.param p3=  640n
-.param p4= 1280n
-.param p5= 2560n
-.param p6= 5120n
-.param p7=10240n
-
-Vin0 ui_in[0] GND dc 0.0    ; clksel[0] 
-Vin1 ui_in[1] GND dc 0.0    ; clksel[1]
-Vin2 ui_in[2] GND dc 0.0    ; clksel[2]
-Vin3 ui_in[3] GND dc 0.0    ; clksel[3]
-Vin4 ui_in[4] GND dc {vcc}  ; altclk
-Vin5 ui_in[5] GND dc 0.0    ; mode[0]
-Vin6 ui_in[6] GND dc 0.0    ; mode[1]
-Vin7 ui_in[7] GND dc 0.0    ; vga_mode
-
-
-* Vin0 ui_in[0] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h7} {p7} ;NOTE: h0/p0 used on MSB!
-* Vin1 ui_in[1] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h1} {p1}
-* Vin2 ui_in[2] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h2} {p2}
-* Vin3 ui_in[3] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h3} {p3}
-* Vin4 ui_in[4] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h4} {p4}
-* Vin5 ui_in[5] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h5} {p5}
-* Vin6 ui_in[6] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h6} {p6}
-* Vin7 ui_in[7] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h0} {p0}
+* Configure the inputs for this design...
+VinEna    ena GND dc {vcc}
+Vin0 ui_in[0] GND dc 0.0    ; clksel[0] ...Select a ring oscillator tapped at 'chain 10'...
+Vin1 ui_in[1] GND dc {vcc}  ; clksel[1] ...
+Vin2 ui_in[2] GND dc 0.0    ; clksel[2] ...
+Vin3 ui_in[3] GND dc {vcc}  ; clksel[3] ...TAP10 ~= 75MHz?
+Vin4 ui_in[4] GND dc 0.0    ; altclk ...not used unless clksel[3:0]==1
+Vin5 ui_in[5] GND dc 0.0    ; mode[0] ...
+Vin6 ui_in[6] GND dc 0.0    ; mode[1] ...(not used yet)
+Vin7 ui_in[7] GND dc 0.0    ; vga_mode: 0=regular 640x480 59.94Hz
 
 * Pulse generators...
 *       net     ref fn     init   alt  dly  rise  fall  dut  period
-* 25MHz clock:
+* 25MHz system clock:
 Vclk    clk     GND PULSE   0.0 {vcc}   0n    1n    1n  20n  40n
-* reset signal
+* reset signal (asserted for 80ns, starting 10ns into the simulation):
 Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
 
-* ***NOTE: Update 1st line of this SPICE file if changing any of the .options below!
+*** Some options for speeding things up (at the cost of accuracy):
 * * 1G-ohm shunt from all nodes to GND:
 * .option rshunt = 1e9
 * .options method=trap xmu=0.495
@@ -115,6 +93,7 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
     save
     + vcc
     + i(vcc)
+    + ena
     + clk
     + rst_n
     + "ui_in[0]"
@@ -159,9 +138,14 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
     + "uo_out[7]"
 
     tran 8n 8193u 0 8n UIC ; 8192u is about 256 lines.
+
+    * Write all the 'save' vectors (above) to a RAW file:
     write sim_out/full_spice_sim.raw
+
+    * Save a snapshot of the simulation, so that hopefully we could resume it later:
     snsave sim_out/full_spice_sim.snap
 
+    * Set up some colours for charting:
     set  color0=black           ; Background.
     set  color1=rgb:44/44/44    ; Text/grid.
     set  color2=rgb:77/00/77    ; (Dark magenta)
@@ -174,6 +158,9 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
     set  color9=rgb:00/00/99    ; (Blue, DARK)
     set color10=rgb:cc/cc/00    ; (Mid yellow)
     set color11=rgb:cc/00/cc    ; (Mid magenta)
+
+    * Plot the key signals w e care about:
+    plot ena/4.4+0 clk/4.4+1 rst_n/4.4+2 "uio_out[4]"/4.4+3 "uio_out[5]"/4.4+4 "uio_out[6]"/4.4+5 "uio_out[7]"/4.4+6 "uo_out[7]"/4.4+7 "uo_out[3]"/4.4+8
 
 .endc
 .end

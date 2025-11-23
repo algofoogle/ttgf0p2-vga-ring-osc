@@ -38,7 +38,7 @@ endmodule
 
 // A ring where the point of loopback is selectable:
 module tapped_ring #(
-    //NOTE: These parameters must be even since
+    //NOTE: These parameters must be even-numbered since
     // there is a final baked-in inverter that makes the ring odd.
     //NOTE: These are deltas, i.e. each in turn is added to those before it.
     parameter TAP00 = 2,   // => 3      => 3.33 GHz
