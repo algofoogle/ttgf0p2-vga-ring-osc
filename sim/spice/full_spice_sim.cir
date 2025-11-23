@@ -1,0 +1,179 @@
+tt_um_algofoogle_vgaringosc_parax simulation
+
+.include /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+.lib /home/anton/ttsetup@ttgf0p2/pdk/gf180mcuD/libs.tech/ngspice/smbb000149.ngspice typical
+
+.include "tt_um_algofoogle_vgaringosc.from_gds.sim.spice"
+
+.param vcc=3.3
+vcc vcc 0 {vcc}
+
+*NOTE: Port ordering matches how it was extracted by Magic:
+xtt
++ 0
++ vcc
++ clk
++ ena
++ rst_n
++ ui_in[0]
++ ui_in[1]
++ ui_in[2]
++ ui_in[3]
++ ui_in[4]
++ ui_in[5]
++ ui_in[6]
++ ui_in[7]
++ uio_in[0]
++ uio_in[1]
++ uio_in[2]
++ uio_in[3]
++ uio_in[4]
++ uio_in[5]
++ uio_in[6]
++ uio_in[7]
++ uio_oe[0]
++ uio_oe[1]
++ uio_oe[2]
++ uio_oe[3]
++ uio_oe[4]
++ uio_oe[5]
++ uio_oe[6]
++ uio_oe[7]
++ uio_out[0]
++ uio_out[1]
++ uio_out[2]
++ uio_out[3]
++ uio_out[4]
++ uio_out[5]
++ uio_out[6]
++ uio_out[7]
++ uo_out[0]
++ uo_out[1]
++ uo_out[2]
++ uo_out[3]
++ uo_out[4]
++ uo_out[5]
++ uo_out[6]
++ uo_out[7]
++ tt_um_algofoogle_vgaringosc_parax
+
+.param rise=     1n
+.param fall=     1n
+* Duty cycle (high time) of each digital input:
+.param h0=   40n-1n
+.param h1=   80n-1n
+.param h2=  160n-1n
+.param h3=  320n-1n
+.param h4=  640n-1n
+.param h5= 1280n-1n
+.param h6= 2560n-1n
+.param h7= 5120n-1n
+* Period of each digital input:
+.param p0=   80n
+.param p1=  160n
+.param p2=  320n
+.param p3=  640n
+.param p4= 1280n
+.param p5= 2560n
+.param p6= 5120n
+.param p7=10240n
+
+Vin0 ui_in[0] GND dc 0.0    ; clksel[0] 
+Vin1 ui_in[1] GND dc 0.0    ; clksel[1]
+Vin2 ui_in[2] GND dc 0.0    ; clksel[2]
+Vin3 ui_in[3] GND dc 0.0    ; clksel[3]
+Vin4 ui_in[4] GND dc {vcc}  ; altclk
+Vin5 ui_in[5] GND dc 0.0    ; mode[0]
+Vin6 ui_in[6] GND dc 0.0    ; mode[1]
+Vin7 ui_in[7] GND dc 0.0    ; vga_mode
+
+
+* Vin0 ui_in[0] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h7} {p7} ;NOTE: h0/p0 used on MSB!
+* Vin1 ui_in[1] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h1} {p1}
+* Vin2 ui_in[2] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h2} {p2}
+* Vin3 ui_in[3] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h3} {p3}
+* Vin4 ui_in[4] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h4} {p4}
+* Vin5 ui_in[5] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h5} {p5}
+* Vin6 ui_in[6] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h6} {p6}
+* Vin7 ui_in[7] GND     PULSE   0.0  {vcc}   120n {rise} {fall} {h0} {p0}
+
+* Pulse generators...
+*       net     ref fn     init   alt  dly  rise  fall  dut  period
+* 25MHz clock:
+Vclk    clk     GND PULSE   0.0 {vcc}   0n    1n    1n  20n  40n
+* reset signal
+Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
+
+* ***NOTE: Update 1st line of this SPICE file if changing any of the .options below!
+* * 1G-ohm shunt from all nodes to GND:
+* .option rshunt = 1e9
+* .options method=trap xmu=0.495
+* .options reltol=2e-3 abstol=1e-11 vntol=1e-5 ; 0.2%, 10pA, 10uV -- Defaults: 1e-3 (0.1%), 1e-12 (1pA), 1e-6 (1uV).
+
+.control
+    save
+    + vcc
+    + i(vcc)
+    + clk
+    + rst_n
+    + "ui_in[0]"
+    + "ui_in[1]"
+    + "ui_in[2]"
+    + "ui_in[3]"
+    + "ui_in[4]"
+    + "ui_in[5]"
+    + "ui_in[6]"
+    + "ui_in[7]"
+    + "uio_in[0]"
+    + "uio_in[1]"
+    + "uio_in[2]"
+    + "uio_in[3]"
+    + "uio_in[4]"
+    + "uio_in[5]"
+    + "uio_in[6]"
+    + "uio_in[7]"
+    + "uio_oe[0]"
+    + "uio_oe[1]"
+    + "uio_oe[2]"
+    + "uio_oe[3]"
+    + "uio_oe[4]"
+    + "uio_oe[5]"
+    + "uio_oe[6]"
+    + "uio_oe[7]"
+    + "uio_out[0]"
+    + "uio_out[1]"
+    + "uio_out[2]"
+    + "uio_out[3]"
+    + "uio_out[4]"
+    + "uio_out[5]"
+    + "uio_out[6]"
+    + "uio_out[7]"
+    + "uo_out[0]"
+    + "uo_out[1]"
+    + "uo_out[2]"
+    + "uo_out[3]"
+    + "uo_out[4]"
+    + "uo_out[5]"
+    + "uo_out[6]"
+    + "uo_out[7]"
+
+    tran 8n 8193u 0 8n UIC ; 8192u is about 256 lines.
+    write sim_out/full_spice_sim.raw
+    snsave sim_out/full_spice_sim.snap
+
+    set  color0=black           ; Background.
+    set  color1=rgb:44/44/44    ; Text/grid.
+    set  color2=rgb:77/00/77    ; (Dark magenta)
+    set  color3=rgb:77/77/00    ; (Dark yellow)
+    set  color4=rgb:ff/00/00    ; (Red)
+    set  color5=rgb:00/ff/00    ; (Green)
+    set  color6=rgb:00/00/ff    ; (Blue)
+    set  color7=rgb:99/00/00    ; (Red, DARK)
+    set  color8=rgb:00/99/00    ; (Green, DARK)
+    set  color9=rgb:00/00/99    ; (Blue, DARK)
+    set color10=rgb:cc/cc/00    ; (Mid yellow)
+    set color11=rgb:cc/00/cc    ; (Mid magenta)
+
+.endc
+.end
