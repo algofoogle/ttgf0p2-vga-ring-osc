@@ -1,0 +1,9 @@
+* Make it clear which file is currently being used:
+echo Using ttgf0p2-vga-ring-osc/sim/spice/.spiceinit
+
+* set ngbehavior=hsa     ; set compatibility for reading PDK libs
+* set ng_nomodcheck      ; don't check the model parameters
+set num_threads=20     ; CPU processor cores available
+option noinit          ; don't print operating point data
+option klu             ; select KLU as matrix solver
+
