@@ -66,15 +66,17 @@ xtt
 + tt_um_algofoogle_vgaringosc_parax
 
 * Configure the inputs for this design...
-VinEna    ena GND dc {vcc}
-Vin0 ui_in[0] GND dc 0.0    ; clksel[0] ...Select a ring oscillator tapped at 'chain 2'...
-Vin1 ui_in[1] GND dc {vcc}  ; clksel[1] ...
-Vin2 ui_in[2] GND dc 0.0    ; clksel[2] ...
-Vin3 ui_in[3] GND dc 0.0    ; clksel[3] ...TAP02 ~= 300MHz?
-Vin4 ui_in[4] GND dc 0.0    ; altclk ...not used unless clksel[3:0]==1
-Vin5 ui_in[5] GND dc 0.0    ; mode[0] ...
-Vin6 ui_in[6] GND dc 0.0    ; mode[1] ...(not used yet)
-Vin7 ui_in[7] GND dc 0.0    ; vga_mode: 0=regular 640x480 59.94Hz
+VinEna         ena GND dc {vcc}
+Vin0      ui_in[0] GND dc 0.0   ; clksel[0] ...Select a ring oscillator tapped at 'chain 2'...
+Vin1      ui_in[1] GND dc {vcc} ; clksel[1] ...
+Vin2      ui_in[2] GND dc 0.0   ; clksel[2] ...
+Vin3      ui_in[3] GND dc 0.0   ; clksel[3] ...TAP02 ~= 300MHz?
+Vin4      ui_in[4] GND dc 0.0   ; altclk ...not used unless clksel[3:0]==1
+Vin5      ui_in[5] GND dc 0.0   ; mode[0] ...
+Vin6      ui_in[6] GND dc 0.0   ; mode[1] ...(not used yet)
+Vin7      ui_in[7] GND dc 0.0   ; vga_mode: 0=regular 640x480 59.94Hz
+Vuio_in0 uio_in[0] GND dc {vcc} ; clksel2[0] ...
+Vuio_in1 uio_in[1] GND dc 0.0   ; clksel2[1] ...clksel2=1 (use 5x1 ring).
 
 * Pulse generators...
 *       net     ref fn     init   alt  dly  rise  fall  dut  period
@@ -86,8 +88,8 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
 *** Some options for speeding things up (at the cost of accuracy):
 * 100G-ohm shunt from all nodes to GND:
 .option rshunt = 1e11
-* .options method=trap xmu=0.495
-* .options reltol=2e-3 abstol=1e-11 vntol=1e-5 ; 0.2%, 10pA, 10uV -- Defaults: 1e-3 (0.1%), 1e-12 (1pA), 1e-6 (1uV).
+.options method=trap xmu=0.499
+.options reltol=1e-3 abstol=5e-12 vntol=5e-6 ; 0.2%, 10pA, 10uV -- Defaults: 1e-3 (0.1%), 1e-12 (1pA), 1e-6 (1uV).
 
 .control
     save
@@ -137,7 +139,7 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
     + "uo_out[6]"
     + "uo_out[7]"
 
-    tran 10p 8193u 0 10p UIC ; 8192u is about 256 lines.
+    tran 20p 8193u 0 20p UIC ; 8192u is about 256 lines.
 
     * Write all the 'save' vectors (above) to a RAW file:
     write sim_out/full_spice_sim.raw
@@ -148,19 +150,25 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
     * Set up some colours for charting:
     set  color0=black           ; Background.
     set  color1=rgb:44/44/44    ; Text/grid.
-    set  color2=rgb:77/00/77    ; (Dark magenta)
-    set  color3=rgb:77/77/00    ; (Dark yellow)
-    set  color4=rgb:ff/00/00    ; (Red)
-    set  color5=rgb:00/ff/00    ; (Green)
-    set  color6=rgb:00/00/ff    ; (Blue)
-    set  color7=rgb:99/00/00    ; (Red, DARK)
-    set  color8=rgb:00/99/00    ; (Green, DARK)
-    set  color9=rgb:00/00/99    ; (Blue, DARK)
-    set color10=rgb:cc/cc/00    ; (Mid yellow)
-    set color11=rgb:cc/00/cc    ; (Mid magenta)
+    set  color2=rgb:66/66/66    ; (Grey)            ena
+    set  color3=rgb:77/00/77    ; (Dark magenta)    clk
+    set  color4=rgb:77/77/00    ; (Dark yellow)     rst
+    set  color5=rgb:cc/00/cc    ; (Mid magenta)     osc
+    set  color6=rgb:cc/cc/00    ; (Mid yellow)      osc-div2
+    set  color7=rgb:00/cc/cc    ; (Mid cyan)        osc-div4
+    set  color8=rgb:aa/66/00    ; (Brown)           osc-div8
+    set  color9=rgb:ff/00/ff    ; (Bright magenta)  hsync
+    set color10=rgb:ff/ff/00    ; (Bright yellow)   vsync
+    set color11=rgb:00/00/99    ; (Blue, DARK)      blue
+    set color12=rgb:00/00/ff    ; (Blue)            BLUE
+    set color13=rgb:00/99/00    ; (Green, DARK)     green
+    set color14=rgb:00/ff/00    ; (Green)           GREEN
+    set color15=rgb:99/00/00    ; (Red, DARK)       red
+    set color16=rgb:ff/00/00    ; (Red)             RED
 
     * Plot the key signals w e care about:
+    *    2:ena     3:clk     4:rst       5:osc              6:div2             7:div4             8:div8             9:hsync           10:vsync          11:blue           12:BLUE            13:green           14:GREEN           15:red             16:RED
     plot ena/4.4+0 clk/4.4+1 rst_n/4.4+2 "uio_out[4]"/4.4+3 "uio_out[5]"/4.4+4 "uio_out[6]"/4.4+5 "uio_out[7]"/4.4+6 "uo_out[7]"/4.4+7 "uo_out[3]"/4.4+8
-    plot ena/4.4+0 clk/4.4+1 rst_n/4.4+2 "uio_out[4]"/4.4+3 "uio_out[5]"/4.4+4 "uio_out[6]"/4.4+5 "uio_out[7]"/4.4+6 "uo_out[7]"/4.4+7 "uo_out[3]"/4.4+8 "uo_out[7]"/4.4+9 "uo_out[6]"/4.4+10 "uo_out[5]"/4.4+11 "uo_out[3]"/4.4+12 "uo_out[2]"/4.4+13 "uo_out[1]"/4.4+14
+    plot ena/4.4+0 clk/4.4+1 rst_n/4.4+2 "uio_out[4]"/4.4+3 "uio_out[5]"/4.4+4 "uio_out[6]"/4.4+5 "uio_out[7]"/4.4+6 "uo_out[7]"/4.4+7 "uo_out[3]"/4.4+8 "uo_out[6]"/4.4+9 "uo_out[2]"/4.4+10 "uo_out[5]"/4.4+11 "uo_out[1]"/4.4+12 "uo_out[4]"/4.4+13 "uo_out[0]"/4.4+14
 .endc
 .end

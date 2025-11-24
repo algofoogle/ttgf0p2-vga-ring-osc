@@ -18,7 +18,7 @@ module tt_um_algofoogle_vgaringosc (
 );
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{uio_in, 1'b0};
+  wire _unused = &{uio_in[7:2], 1'b0};
 
   vgaringosc vgaringosc(
     .ena          (ena),
@@ -28,6 +28,7 @@ module tt_um_algofoogle_vgaringosc (
     .worker_mode  (ui_in[6:5]),
     .altclk       (ui_in[4]),
     .clksel       (ui_in[3:0]),
+    .clksel2      (uio_in[1:0]),
     .oscdiv       (uio_out[7:4]),
     .hsync_n      (uo_out[7]),
     .vsync_n      (uo_out[3]),

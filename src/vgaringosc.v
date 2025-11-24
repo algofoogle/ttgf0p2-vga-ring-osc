@@ -13,6 +13,7 @@ module vgaringosc(
     input vga_mode, // 0=normal, 1=1440x900
     input [1:0] worker_mode, // Selects what 'work' the ring oscillator drives.
     input [3:0] clksel, // Selects clock source or ring length. 0=clk, 1=altclk, 2+ goes to RO.
+    input [1:0] clksel2, // 0=normal. 1=use ring_clk1x5, 2=use ring_clk4x5, 3=use !clk
     input altclk,
     output [3:0] oscdiv, // [0]=raw oscillator, [1]=div2, [2]=div4, [3]=div8
     output hsync_n,
@@ -55,10 +56,17 @@ module vgaringosc(
     //^^NOTE: Including reset means the ring can be flushed while the design remains selected.
     // Also, we don't want the ring running if we're trying to use a "debug" clock source.
     wire ring_clk;
+    wire ring_clk1x5;
+    wire ring_clk4x5;
+    wire altring1 = clksel2==1;
+    wire altring4 = clksel2==2;
 
     // Clock mux; not a proper glitch-free mux, but good enough for this case:
     wire worker_clock_unbuffered =
         reset       ?   clk :     // During reset, let CLK thru to the worker to help its sync. reset.
+        altring1    ?   ring_clk1x5 :
+        altring4    ?   ring_clk4x5 :
+        clksel2==3  ?   (!clk) :
         clksel==0   ?   clk :
         clksel==1   ?   altclk :
         /*clksel>=2*/   ring_clk;
@@ -69,19 +77,35 @@ module vgaringosc(
     wire worker_reset = reset || hblank; // Hold the worker in (a nice long) reset during VGA HBLANK period.
 
     tapped_ring tapped_ring(
-        .ena      (ring_ena),
-        .tap      (clksel-4'd2), // clksel==2 => TAP00 ... clksel==15 => TAP13
-        .y        (ring_clk)
+        .ena        (ring_ena),
+        .tap        (clksel-4'd2), // clksel==2 => TAP00 ... clksel==15 => TAP13
+        .y          (ring_clk)
+    );
+
+    // Alternate fixed ring oscillator of 5x inv1:
+    ringosc_inv1 #(.N(5)) ro_inv1(
+        .ena        (ring_ena && altring1),
+        .y          (ring_clk1x5)
+    );
+
+    // Alternate fixed ring oscillator of 5x inv4:
+    ringosc_inv4 #(.N(5)) ro_inv4(
+        .ena        (ring_ena && altring4),
+        .y          (ring_clk4x5)
     );
 
     ring_worker ring_worker(
-        .reset    (worker_reset),
-        .clk      (worker_clock),
-        .mode     (worker_mode),
-        .oscdiv   (oscdiv),
-        .computed (rgb_raw)
+        .reset      (worker_reset),
+        .clk        (worker_clock),
+        .mode       (worker_mode),
+        .oscdiv     (oscdiv),
+        .computed   (rgb_raw)
     );
 
-    assign rgb = rgb_raw & {6{visible}};
+    wire checkerboard = (h[0]^v[0]);
+
+    wire border = ((v==0) || (v==479) || (h==0) || (h==639)) && checkerboard;
+
+    assign rgb = ( {6{checkerboard}} | rgb_raw ) & {6{visible}};
 
 endmodule
