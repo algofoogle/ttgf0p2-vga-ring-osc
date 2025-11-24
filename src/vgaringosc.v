@@ -58,6 +58,7 @@ module vgaringosc(
 
     // Clock mux; not a proper glitch-free mux, but good enough for this case:
     wire worker_clock_unbuffered =
+        reset       ?   clk :     // During reset, let CLK thru to the worker to help its sync. reset.
         clksel==0   ?   clk :
         clksel==1   ?   altclk :
         /*clksel>=2*/   ring_clk;

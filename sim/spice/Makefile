@@ -25,4 +25,4 @@ full: full_spice_sim.cir
 	ngspice $<
 
 clean:
-	rm -rf *_obj_dir *~ .*~ *.so inputs.h outputs.h inouts.h
+	rm -rf *_obj_dir *~ .*~ *.so inputs.h outputs.h inouts.h $(PROJECT_NAME)_parax*

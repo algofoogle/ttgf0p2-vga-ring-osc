@@ -67,10 +67,10 @@ xtt
 
 * Configure the inputs for this design...
 VinEna    ena GND dc {vcc}
-Vin0 ui_in[0] GND dc 0.0    ; clksel[0] ...Select a ring oscillator tapped at 'chain 10'...
+Vin0 ui_in[0] GND dc 0.0    ; clksel[0] ...Select a ring oscillator tapped at 'chain 2'...
 Vin1 ui_in[1] GND dc {vcc}  ; clksel[1] ...
 Vin2 ui_in[2] GND dc 0.0    ; clksel[2] ...
-Vin3 ui_in[3] GND dc {vcc}  ; clksel[3] ...TAP10 ~= 75MHz?
+Vin3 ui_in[3] GND dc 0.0    ; clksel[3] ...TAP02 ~= 300MHz?
 Vin4 ui_in[4] GND dc 0.0    ; altclk ...not used unless clksel[3:0]==1
 Vin5 ui_in[5] GND dc 0.0    ; mode[0] ...
 Vin6 ui_in[6] GND dc 0.0    ; mode[1] ...(not used yet)
@@ -84,10 +84,10 @@ Vclk    clk     GND PULSE   0.0 {vcc}   0n    1n    1n  20n  40n
 Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
 
 *** Some options for speeding things up (at the cost of accuracy):
-* * 1G-ohm shunt from all nodes to GND:
-* .option rshunt = 1e9
+* 10G-ohm shunt from all nodes to GND:
+.option rshunt = 1e10
 * .options method=trap xmu=0.495
-* .options reltol=2e-3 abstol=1e-11 vntol=1e-5 ; 0.2%, 10pA, 10uV -- Defaults: 1e-3 (0.1%), 1e-12 (1pA), 1e-6 (1uV).
+.options reltol=2e-3 abstol=1e-11 vntol=1e-5 ; 0.2%, 10pA, 10uV -- Defaults: 1e-3 (0.1%), 1e-12 (1pA), 1e-6 (1uV).
 
 .control
     save
@@ -137,7 +137,7 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
     + "uo_out[6]"
     + "uo_out[7]"
 
-    tran 8n 8193u 0 8n UIC ; 8192u is about 256 lines.
+    tran 200p 8193u 0 200p UIC ; 8192u is about 256 lines.
 
     * Write all the 'save' vectors (above) to a RAW file:
     write sim_out/full_spice_sim.raw
@@ -161,6 +161,6 @@ Vreset  rst_n   GND PULSE {vcc}   0.0  10n    1n    1n  80n  34m
 
     * Plot the key signals w e care about:
     plot ena/4.4+0 clk/4.4+1 rst_n/4.4+2 "uio_out[4]"/4.4+3 "uio_out[5]"/4.4+4 "uio_out[6]"/4.4+5 "uio_out[7]"/4.4+6 "uo_out[7]"/4.4+7 "uo_out[3]"/4.4+8
-
+    plot ena/4.4+0 clk/4.4+1 rst_n/4.4+2 "uio_out[4]"/4.4+3 "uio_out[5]"/4.4+4 "uio_out[6]"/4.4+5 "uio_out[7]"/4.4+6 "uo_out[7]"/4.4+7 "uo_out[3]"/4.4+8 "uo_out[7]"/4.4+9 "uo_out[6]"/4.4+10 "uo_out[5]"/4.4+11 "uo_out[3]"/4.4+12 "uo_out[2]"/4.4+13 "uo_out[1]"/4.4+14
 .endc
 .end

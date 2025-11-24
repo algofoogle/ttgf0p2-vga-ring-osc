@@ -41,22 +41,22 @@ module tapped_ring #(
     //NOTE: These parameters must be even-numbered since
     // there is a final baked-in inverter that makes the ring odd.
     //NOTE: These are deltas, i.e. each in turn is added to those before it.
-    parameter TAP00 = 2,   // => 3      => 3.33 GHz
-    parameter TAP01 = 4,   // => 7      => 1.43 GHz
-    parameter TAP02 = 6,   // => 13     => 769 MHz
-    parameter TAP03 = 2,   // => 15     => 667 MHz
-    parameter TAP04 = 4,   // => 19     => 526 MHz
-    parameter TAP05 = 10,  // => 29     => 345 MHz
-    parameter TAP06 = 12,  // => 41     => 244 MHz
-    parameter TAP07 = 18,  // => 59     => 169 MHz
-    parameter TAP08 = 20,  // => 79     => 127 MHz
-    parameter TAP09 = 26,  // => 105    => 95 MHz
-    parameter TAP10 = 28,  // => 133    => 75 MHz
-    parameter TAP11 = 34,  // => 167    => 60 MHz
-    parameter TAP12 = 36,  // => 203    => 49 MHz
-    parameter TAP13 = 42,  // => 245    => 41 MHz
-    parameter TAP14 = 80,  // => 325    => 31 MHz
-    parameter TAP15 = 170  // => 495    => 20 MHz
+    parameter TAP00 = 2,   // => 3      => 820
+    parameter TAP01 = 2,   // => 5      => 492
+    parameter TAP02 = 2,   // => 7      => 351
+    parameter TAP03 = 2,   // => 9      => 273
+    parameter TAP04 = 4,   // => 13     => 189
+    parameter TAP05 = 4,   // => 17     => 145
+    parameter TAP06 = 4,   // => 21     => 117
+    parameter TAP07 = 4,   // => 25     => 98
+    parameter TAP08 = 8,   // => 33     => 75
+    parameter TAP09 = 8,   // => 41     => 60 MHz
+    parameter TAP10 = 8,   // => 49     => 50
+    parameter TAP11 = 16,  // => 65     => 38
+    parameter TAP12 = 16,  // => 81     => 30
+    parameter TAP13 = 32,  // => 113    => 22
+    parameter TAP14 = 64,  // => 177    => 14
+    parameter TAP15 = 128  // => 305    => 8
 ) (
     input ena,
     input [3:0] tap,
