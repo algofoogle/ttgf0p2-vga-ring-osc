@@ -121,6 +121,6 @@ module vgaringosc(
 
     wire border = ((v==0) || (v==479) || (h==0) || (h==639)) && checkerboard;
 
-    assign rgb = ( {6{checkerboard}} | rgb_raw ) & {6{visible}};
+    assign rgb = ( {6{border}} | rgb_raw ) & {6{visible}};
 
 endmodule
