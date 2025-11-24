@@ -15,11 +15,11 @@ ext2sim
 # extresist lumped on
 # extresist tolerance 0.05 ; # 1 is default. <1 means fewer resistors. >1 means more.
 # extresist tolerance 0.001 ; # 1 is default. <1 means fewer resistors. >1 means more.
-extresist tolerance 10
+extresist tolerance 1
 extresist
 ext2spice lvs
 # ext2spice cthresh 0.01 ; # Ignore caps below 1e-17 (normally 0, all caps are extracted)
-ext2spice cthresh 0.01 ; # Ignore caps below this many fF
+ext2spice cthresh 0.001 ; # Ignore caps below this many fF
 # ext2spice rthresh 5
 # ext2spice merge aggressive
 # ext2spice short resistor

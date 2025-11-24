@@ -70,7 +70,7 @@ module vgaringosc(
 
     tapped_ring tapped_ring(
         .ena      (ring_ena),
-        .tap      (clksel), //NOTE: Because of ring_ena logic, only clksel>=2 applies.
+        .tap      (clksel-4'd2), // clksel==2 => TAP00 ... clksel==15 => TAP13
         .y        (ring_clk)
     );
 

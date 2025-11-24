@@ -35,6 +35,14 @@
 
   "RSZ_DONT_TOUCH_RX": "notouch_",
 
+  "//": "Placement obstructions to cut out a lot of decap cells (to help speed up simulation, but also for fun:",
+  "//DISABLED:FP_OBSTRUCTIONS": [
+    [30.00, 17.50,   152.00, 100.00],
+    [30.00, 17.50,    72.00, 143.00],
+    [30.00, 17.50,   225.00,  72.60],
+    [30.00, 17.50,   320.00,  45.00]
+  ],
+
   "//": "Configuration docs: https://librelane.readthedocs.io/en/latest/reference/configuration.html",
 
   "//": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",

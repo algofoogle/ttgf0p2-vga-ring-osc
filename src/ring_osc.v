@@ -2,7 +2,7 @@
 //`timescale 1ns / 1ps
 
 // See: https://gf180mcu-pdk.readthedocs.io/en/latest/digital/standard_cells/gf180mcu_fd_sc_mcu7t5v0/cells/inv/gf180mcu_fd_sc_mcu7t5v0__inv_1.html
-`define PDK_INVERTER_CELL   gf180mcu_fd_sc_mcu7t5v0__inv_1
+`define PDK_INVERTER_CELL   gf180mcu_fd_sc_mcu7t5v0__inv_2
 //NOTE: If you change this cell, the port names may need to be altered in any instances.
 
 module inverter_cell (
@@ -53,10 +53,11 @@ module tapped_ring #(
     parameter TAP09 = 8,   // => 41     => 60 MHz
     parameter TAP10 = 8,   // => 49     => 50
     parameter TAP11 = 16,  // => 65     => 38
-    parameter TAP12 = 16,  // => 81     => 30
-    parameter TAP13 = 32,  // => 113    => 22
-    parameter TAP14 = 64,  // => 177    => 14
-    parameter TAP15 = 128  // => 305    => 8
+    parameter TAP12 = 32,  // => 97     => ?
+    parameter TAP13 = 64,  // => 161    => ?
+    // Spares (not normally used by this design):
+    parameter TAP14 = 2,   // => 163    => ?
+    parameter TAP15 = 2    // => 165    => ?
 ) (
     input ena,
     input [3:0] tap,

@@ -32,7 +32,7 @@ Supply a 25MHz clock to the system `clk`, and assert reset for at least 2 clocks
 
 Expect to see vertical coloured bars on screen, but expect some jitter. Their width should increase as you increase `clksel`.
 
-Measure the ring oscillator on `uio_out[7:4]` -- `uio_out[4]` is the raw oscillator output, and the higher bits are it divided by powers of 2.
+Measure the ring oscillator on `uio_out[7:4]`: `uio_out[4]` is the raw oscillator output, and the higher bits are it divided by powers of 2.
 
 
 ## External hardware
