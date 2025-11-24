@@ -6,6 +6,19 @@
 //NOTE: If you change this cell, the port names may need to be altered in any instance.
 
 
+// This is to manage lint checking to not report about unconnected power pins.
+// Thanks https://github.com/dlmiles/ttgf0p2-ringosc-5inv/blob/main/src/project.v
+`ifndef LINT_OFF_PINMISSING_POWER_PINS
+`ifdef USE_POWER_PINS
+`define LINT_OFF_PINMISSING_POWER_PINS /* verilator lint_off PINMISSING */
+`define LINT_ON_PINMISSING_POWER_PINS /* verilator lint_on PINMISSING */
+`else
+`define LINT_OFF_PINMISSING_POWER_PINS /* */
+`define LINT_ON_PINMISSING_POWER_PINS /* */
+`endif
+`endif
+
+
 module vgaringosc(
     input ena,
     input clk,
@@ -72,7 +85,9 @@ module vgaringosc(
         /*clksel>=2*/   ring_clk;
     // Buffered clock, to help CTS/SDC find the 'internal_clock' source pin:
     wire worker_clock;
+    `LINT_OFF_PINMISSING_POWER_PINS
     (* keep_hierarchy *) `PDK_CLKBUFF_CELL workerclkbuff_notouch_ (.I(worker_clock_unbuffered), .Z(worker_clock));
+    `LINT_ON_PINMISSING_POWER_PINS
 
     wire worker_reset = reset || hblank; // Hold the worker in (a nice long) reset during VGA HBLANK period.
 

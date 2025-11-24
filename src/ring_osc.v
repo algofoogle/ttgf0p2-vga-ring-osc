@@ -7,6 +7,7 @@
 
 // This is to manage lint checking to not report about unconnected power pins.
 // Thanks https://github.com/dlmiles/ttgf0p2-ringosc-5inv/blob/main/src/project.v
+`ifndef LINT_OFF_PINMISSING_POWER_PINS
 `ifdef USE_POWER_PINS
 `define LINT_OFF_PINMISSING_POWER_PINS /* verilator lint_off PINMISSING */
 `define LINT_ON_PINMISSING_POWER_PINS /* verilator lint_on PINMISSING */
@@ -14,7 +15,7 @@
 `define LINT_OFF_PINMISSING_POWER_PINS /* */
 `define LINT_ON_PINMISSING_POWER_PINS /* */
 `endif
-
+`endif
 
 module inverter_cell (
     input   wire a,
@@ -112,7 +113,9 @@ module ringosc_inv1 #(
     assign ins[N-1:1] = outs[N-2:0];
     assign ins[0] = outs[N-1] & ena; // ena==0 will break the loop (stop the oscillator ring, hence flush it out too).
     assign y = ins[0];
+    `LINT_OFF_PINMISSING_POWER_PINS
     (* keep_hierarchy *) gf180mcu_fd_sc_mcu7t5v0__inv_1 inv_array_notouch_ [N-1:0] (.I(ins), .ZN(outs));
+    `LINT_ON_PINMISSING_POWER_PINS
 endmodule
 
 // Another short, fixed ring: by default, 5 instances of inv_4:
@@ -127,5 +130,7 @@ module ringosc_inv4 #(
     assign ins[N-1:1] = outs[N-2:0];
     assign ins[0] = outs[N-1] & ena; // ena==0 will break the loop (stop the oscillator ring, hence flush it out too).
     assign y = ins[0];
+    `LINT_OFF_PINMISSING_POWER_PINS
     (* keep_hierarchy *) gf180mcu_fd_sc_mcu7t5v0__inv_4 inv_array_notouch_ [N-1:0] (.I(ins), .ZN(outs));
+    `LINT_ON_PINMISSING_POWER_PINS
 endmodule
